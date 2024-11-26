@@ -6,12 +6,22 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct TCAApp: App {
+
+    static let store = Store(initialState: RootFeature.State()) {
+        RootFeature()
+    }
+    
+    init() {
+        TCAApp.store.send(.onAppear)
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView(store: TCAApp.store)
         }
     }
 }
