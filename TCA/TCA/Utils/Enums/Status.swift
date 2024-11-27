@@ -5,9 +5,7 @@
 //  Created by Nataliya Lazouskaya on 26/11/2024.
 //
 
-import Foundation
-
-enum Status: Equatable {
+enum Status {
     case unauthorized
     case authorized
     case onboarding

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct RootView: View {
     
- //   let screenStateNotification = NotificationCenter.default.publisher(for: .updateGlobalScreenState)
     @Perception.Bindable var store: StoreOf<RootFeature>
     
     var body: some View {
@@ -18,28 +17,14 @@ struct RootView: View {
             switch store.authStatus {
                 case .unknown:
                     progressView()
-                case .firstRun:
-//                    PaywallView(store: store.scope(state: \.paywall, action: \.paywall))
-//                    PaywallFeature()
-                    progressView()
                 case .unauthorized:
-  //                  signInView(store: store.scope(state: \.signIn, action: \.signIn))
-                    progressView()
+                    paywallView()
                 case .onboarding:
-   //                 onboardingView()
-                    progressView()
+                    onboardingView()
                 case .authorized:
-         //           tabView(store: store.scope(state: \.mainTab, action: \.mainTab))
-                    progressView()
+                    tabView()
             }
         }
-//        .onReceive(screenStateNotification) { notification in
-//            guard let userInfo = notification.userInfo,
-//                  let appState = userInfo["authStatus"] as? AuthStatus else {
-//                return
-//            }
-//            store.send(.changeState(appState), animation: .default)
-//        }
     }
 
     @ViewBuilder
@@ -47,16 +32,21 @@ struct RootView: View {
         ProgressView()
     }
 
-//    @ViewBuilder
-//    private func onboardingView() -> some View {
-//        OnboardingView(store: store.scope(state: \.onboarding, action: \.onboarding))
-//            .transition(.move(edge: .trailing))
-//    }
+    @ViewBuilder
+    private func onboardingView() -> some View {
+        OnboardingView(store: store.scope(state: \.onboarding, action: \.onboarding))
+            .transition(.move(edge: .trailing))
+    }
+    
+    @ViewBuilder
+    private func paywallView() -> some View {
+        PaywallView(store: store.scope(state: \.paywall, action: \.paywall))
+    }
 
-//    @ViewBuilder
-//    private func tabView(store: StoreOf<MainTabFeature>) -> some View {
-//        MainTabView(store: store)
-//    }
+    @ViewBuilder
+    private func tabView() -> some View {
+        MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
+    }
 }
 
 struct RootView_Previews: PreviewProvider {
@@ -68,12 +58,12 @@ struct RootView_Previews: PreviewProvider {
         }))
         .previewDisplayName("Unknown")
         
-        let _ = state.authStatus = .firstRun
+        let _ = state.authStatus = .onboarding
         
         RootView(store: Store(initialState: state, reducer: {
             RootFeature()
         }))
-        .previewDisplayName("First Run")
+        .previewDisplayName("Onboarding")
         
         let _ = state.authStatus = .unauthorized
         
