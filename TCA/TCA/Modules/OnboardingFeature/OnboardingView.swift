@@ -14,34 +14,18 @@ struct OnboardingView: View {
     
     var body: some View {
         WithPerceptionTracking {
-            switch store.status {
-                case .authorized:
-                    tabView()
-                case .unauthorized:
-                    paywallView()
-                default:
-                    if store.isLoading {
-                        ProgressView()
-                    } else {
-                        Button {
-                            store.send(.onboardingIsFinishedTapped)
-                        } label: {
-                            Text("Onboarding is finished")
-                                .accentColor(.green)
-                        }
-                    }
+            if store.isLoading {
+                ProgressView()
+            } else {
+                Button {
+                    store.send(.onboardingIsFinishedTapped)
+                } label: {
+                    Text("Onboarding is finished")
+                        .accentColor(.green)
+                }
+                .buttonStyle(.bordered)
             }
         }
-    }
-    
-    @ViewBuilder
-    private func tabView() -> some View {
-        MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
-    }
-    
-    @ViewBuilder
-    private func paywallView() -> some View {
-        PaywallView(store: store.scope(state: \.paywall, action: \.paywall))
     }
 }
 

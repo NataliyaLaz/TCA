@@ -31,6 +31,8 @@ struct MainTabFeature {
     }
     
     var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
                 case .content(.moveToSettings):
@@ -38,6 +40,12 @@ struct MainTabFeature {
                     return .none
                     
                 case .settings(.logoutTapped):
+                    NotificationCenter.default.post(
+                        name: .updateGlobalScreenState,
+                        object: nil,
+                        userInfo: ["authStatus": Status.unauthorized]
+                    )
+                    Toast.shared.present(title: "You are logged out")
                     return .none
                     
                 case .settings(.moveToContent):
@@ -47,7 +55,6 @@ struct MainTabFeature {
                 case .content, .settings:
                     return .none
                     
-                    // For some reason vanila binding doesn't works with Tabview and doesn't update the selected tab under hood
                 case let .selectTab(tab):
                     state.selectedTab = tab
                     return .none

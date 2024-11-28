@@ -18,7 +18,9 @@ struct ContentTabView: View {
                 store.send(.moveToSettings)
             } label: {
                 Text("Go to Settings")
+                    .accentColor(.green)
             }
+            .buttonStyle(.bordered)
         }
     }
 }

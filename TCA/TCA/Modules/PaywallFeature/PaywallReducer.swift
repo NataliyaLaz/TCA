@@ -14,18 +14,17 @@ struct PaywallFeature {
     struct State: Equatable {
         var isLoading: Bool = false
         var status: Status = .unauthorized
-        var mainTab = MainTabFeature.State()
     }
     
     enum Action: BindableAction  {
         case binding(BindingAction<State>)
         case tryToProceedToMainTab
         case changeState(Status)
-        case mainTab(MainTabFeature.Action)
     }
     
     @Dependency(\.securityService) var securityService
     @Dependency(\.logService) var logService
+    @Dependency(\.appNotificationService) var appNotificationService
     
     var body: some ReducerOf<Self> {
         BindingReducer()
@@ -49,26 +48,25 @@ struct PaywallFeature {
                         case .authorized:
                             state.isLoading = false
                             state.status = .authorized
-                            state.mainTab = .init()
+                            NotificationCenter.default.post(
+                                name: .updateGlobalScreenState,
+                                object: nil,
+                                userInfo: ["authStatus": Status.authorized]
+                            )
                             return .none
                         case .unauthorized:
                             state.isLoading = false
                             state.status = .unauthorized
+                            appNotificationService.errorToast("Try again")
                             return .none
                         default:
                             state.isLoading = false
                             return .none
                     }
-                case .mainTab:
-                    return .none
                     
                 case .binding:
                     return .none
             }
-        }
-        
-        Scope(state: \.mainTab, action: /Action.mainTab) {
-            MainTabFeature()
         }
     }
 }

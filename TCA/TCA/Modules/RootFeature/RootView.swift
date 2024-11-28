@@ -9,7 +9,7 @@ import ComposableArchitecture
 import SwiftUI
 
 struct RootView: View {
-    
+    let screenStateNotification = NotificationCenter.default.publisher(for: .updateGlobalScreenState)
     @Perception.Bindable var store: StoreOf<RootFeature>
     
     var body: some View {
@@ -24,6 +24,13 @@ struct RootView: View {
                 case .authorized:
                     tabView()
             }
+        }
+        .onReceive(screenStateNotification) { notification in
+            guard let userInfo = notification.userInfo,
+                  let appState = userInfo["authStatus"] as? Status else {
+                return
+            }
+            store.send(.changeState(appState), animation: .default)
         }
     }
 

@@ -14,16 +14,12 @@ struct OnboardingFeature {
     struct State: Equatable {
         var isLoading: Bool = false
         var status: Status = .onboarding
-        var mainTab = MainTabFeature.State()
-        var paywall = PaywallFeature.State()
     }
 
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onboardingIsFinishedTapped
         case changeState(Status)
-        case mainTab(MainTabFeature.Action)
-        case paywall(PaywallFeature.Action)
     }
 
     @Dependency(\.securityService) var securityService
@@ -51,21 +47,25 @@ struct OnboardingFeature {
                         case .authorized:
                             state.isLoading = false
                             state.status = .authorized
-                            state.mainTab = .init()
+                            NotificationCenter.default.post(
+                                name: .updateGlobalScreenState,
+                                object: nil,
+                                userInfo: ["authStatus": Status.authorized]
+                            )
                             return .none
                         case .unauthorized:
                             state.isLoading = false
                             state.status = .unauthorized
-                            state.paywall = .init()
+                            NotificationCenter.default.post(
+                                name: .updateGlobalScreenState,
+                                object: nil,
+                                userInfo: ["authStatus": Status.unauthorized]
+                            )
                             return .none
                         default:
                             state.isLoading = false
                             return .none
                     }
-                case .mainTab:
-                    return .none
-                case .paywall:
-                    return .none
                 case .binding:
                     return .none
             }

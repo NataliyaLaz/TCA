@@ -21,7 +21,9 @@ struct TCAApp: App {
     
     var body: some Scene {
         WindowGroup {
-            RootView(store: TCAApp.store)
+            SceneView {
+                RootView(store: TCAApp.store)
+            }
         }
     }
 }

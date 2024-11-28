@@ -19,13 +19,17 @@ struct SettingsTabView: View {
                     store.send(.moveToContent)
                 } label: {
                     Text("Go to Content")
+                        .accentColor(.green)
                 }
-                
+                .buttonStyle(.bordered)
+
                 Button {
                     store.send(.logoutTapped)
                 } label: {
                     Text("Log out")
+                        .accentColor(.green)
                 }
+                .buttonStyle(.bordered)
             }
         }
     }

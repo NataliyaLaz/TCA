@@ -13,28 +13,19 @@ struct PaywallView: View {
     @Perception.Bindable var store: StoreOf<PaywallFeature>
     
     var body: some View {
-        WithPerceptionTracking {
-            switch store.status {
-                case .authorized:
-                    tabView()
-                default:
-                    if store.isLoading {
-                        ProgressView()
-                    } else {
-                        Button {
-                            store.send(.tryToProceedToMainTab)
-                        } label: {
-                            Text("Proceed")
-                                .accentColor(.green)
-                        }
-                    }
+        WithPerceptionTracking {            
+            if store.isLoading {
+                ProgressView()
+            } else {
+                Button {
+                    store.send(.tryToProceedToMainTab)
+                } label: {
+                    Text("Proceed")
+                        .accentColor(.green)
+                }
+                .buttonStyle(.bordered)
             }
         }
-    }
-    
-    @ViewBuilder
-    private func tabView() -> some View {
-        MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
     }
 }
 
